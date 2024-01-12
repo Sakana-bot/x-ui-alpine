@@ -75,7 +75,7 @@ fi
 
 install_base() {
     if [[ x"${release}" == x"alpine" ]]; then
-		apk add wget curl tar jq tzdata
+        apk add wget curl tar jq tzdata
     elif [[ x"${release}" == x"centos" ]]; then
         yum install wget curl tar jq -y
     else
@@ -123,7 +123,7 @@ config_after_install() {
 install_x-ui() {
     if [[ -e /etc/init.d/x-ui ]]; then
         rc-service x-ui stop
-	fi
+    fi
     cd /usr/local/
 
     if [ $# == 0 ]; then
@@ -157,10 +157,10 @@ install_x-ui() {
     rm x-ui-linux-${arch}.tar.gz -f
     cd x-ui
     chmod +x x-ui bin/xray-linux-${arch}
-	cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-	echo "Asia/Shanghai" > /etc/timezone
-	wget --no-check-certificate -O /etc/init.d/x-ui https://raw.githubusercontent.com/Sakana-bot/x-ui-alpine/main/x-ui
-	chmod +x /etc/init.d/x-ui
+    cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+    echo "Asia/Shanghai" > /etc/timezone
+    wget --no-check-certificate -O /etc/init.d/x-ui https://raw.githubusercontent.com/Sakana-bot/x-ui-alpine/main/x-ui
+    chmod +x /etc/init.d/x-ui
     wget --no-check-certificate -O /usr/bin/x-ui https://raw.githubusercontent.com/Sakana-bot/x-ui-alpine/main/x-ui.sh
     chmod +x /usr/local/x-ui/x-ui.sh
     chmod +x /usr/bin/x-ui
