@@ -1,0 +1,27 @@
+#!/sbin/openrc-run
+
+name="x-ui"
+description="x-ui Service"
+
+command="/usr/local/x-ui/x-ui"
+command_background="yes"
+pidfile="/var/run/${name}.pid"
+directory="/usr/local/x-ui/"
+
+depend() {
+    need net
+}
+
+start() {
+    ebegin "Starting $name"
+	cd "$directory" || return 1
+    start-stop-daemon --start --background --pidfile "$pidfile" --make-pidfile --exec "$command"
+    eend $?
+}
+
+stop() {
+    ebegin "Stopping $name"
+    start-stop-daemon --stop --pidfile "$pidfile" --exec "$command"
+    killall xray-linux-amd64
+    eend $?
+}
