@@ -13,6 +13,8 @@ cur_dir=$(pwd)
 # check os
 if [[ -f /etc/redhat-release ]]; then
     release="centos"
+elif cat /etc/issue | grep -Eqi "alpine"; then
+    release="alpine"
 elif cat /etc/issue | grep -Eqi "debian"; then
     release="debian"
 elif cat /etc/issue | grep -Eqi "ubuntu"; then
@@ -25,8 +27,6 @@ elif cat /proc/version | grep -Eqi "ubuntu"; then
     release="ubuntu"
 elif cat /proc/version | grep -Eqi "centos|red hat|redhat"; then
     release="centos"
-elif cat /etc/issue | grep -Eqi "alpine"; then
-    release="alpine"
 else
     echo -e "${red}未检测到系统版本，请联系脚本作者！${plain}\n" && exit 1
 fi
@@ -74,10 +74,10 @@ elif [[ x"${release}" == x"debian" ]]; then
 fi
 
 install_base() {
-    if [[ x"${release}" == x"centos" ]]; then
-        yum install wget curl tar jq -y
-	elif [[ x"${release}" == x"alpine" ]]; then
+    if [[ x"${release}" == x"alpine" ]]; then
 		apk add wget curl tar jq tzdata
+    elif [[ x"${release}" == x"centos" ]]; then
+        yum install wget curl tar jq -y
     else
         apt install wget curl tar jq -y
     fi
@@ -121,7 +121,9 @@ config_after_install() {
 }
 
 install_x-ui() {
-    rc-service x-ui stop
+    if [[ -e /etc/init.d/x-ui ]]; then
+        rc-service x-ui stop
+	fi
     cd /usr/local/
 
     if [ $# == 0 ]; then
@@ -157,7 +159,7 @@ install_x-ui() {
     chmod +x x-ui bin/xray-linux-${arch}
 	cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 	echo "Asia/Shanghai" > /etc/timezone
-	cp -f ./x-ui /etc/init.d/x-ui
+	wget --no-check-certificate -O /etc/init.d/x-ui https://raw.githubusercontent.com/Sakana-bot/x-ui-alpine/main/x-ui
 	chmod +x /etc/init.d/x-ui
     wget --no-check-certificate -O /usr/bin/x-ui https://raw.githubusercontent.com/Sakana-bot/x-ui-alpine/main/x-ui.sh
     chmod +x /usr/local/x-ui/x-ui.sh
