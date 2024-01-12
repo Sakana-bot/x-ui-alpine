@@ -104,7 +104,7 @@ before_show_menu() {
 }
 
 install() {
-    bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install.sh)
+    bash <(curl -Ls https://raw.githubusercontent.com/Sakana-bot/x-ui-alpine/main/install.sh)
     if [[ $? == 0 ]]; then
         if [[ $# == 0 ]]; then
             start
@@ -123,7 +123,7 @@ update() {
         fi
         return 0
     fi
-    bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install.sh)
+    bash <(curl -Ls https://raw.githubusercontent.com/Sakana-bot/x-ui-alpine/main/install.sh)
     if [[ $? == 0 ]]; then
         LOGI "更新完成，已自动重启面板 "
         exit 0
@@ -140,9 +140,7 @@ uninstall() {
     fi
     rc-service x-ui stop
     rc-update del x-ui default
-    rm /etc/systemd/system/x-ui.service -f
-    # systemctl daemon-reload
-    # systemctl reset-failed
+    rm /etc/init.d/x-ui -f
     rm /etc/x-ui/ -rf
     rm /usr/local/x-ui/ -rf
 
