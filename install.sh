@@ -77,7 +77,7 @@ install_base() {
     if [[ x"${release}" == x"centos" ]]; then
         yum install wget curl tar jq -y
 	elif [[ x"${release}" == x"alpine" ]]; then
-		apk add git wget curl tar jq tzdata
+		apk add wget curl tar jq tzdata
     else
         apt install wget curl tar jq -y
     fi
