@@ -32,9 +32,9 @@ else
 fi
 
 if [[ x"${release}" == x"alpine" ]]; then
-	arch=$(uname -m)
+    arch=$(uname -m)
 else
-	arch=$(arch)
+    arch=$(arch)
 fi
 
 if [[ $arch == "x86_64" || $arch == "x64" || $arch == "s390x" || $arch == "amd64" ]]; then
@@ -57,7 +57,11 @@ os_version=""
 
 # os version
 if [[ -f /etc/os-release ]]; then
-    os_version=$(awk -F'[= ."]' '/VERSION_ID/{print $3}' /etc/os-release)
+    if [[ x"${release}" == x"alpine" ]]; then
+        os_version=$(cat /etc/os-release | awk -F= '/VERSION_ID/{print $2}' | awk -F. '{print $1"."$2}')
+    else
+        os_version=$(awk -F'[= ."]' '/VERSION_ID/{print $3}' /etc/os-release)
+    fi
 fi
 if [[ -z "$os_version" && -f /etc/lsb-release ]]; then
     os_version=$(awk -F'[= ."]+' '/DISTRIB_RELEASE/{print $2}' /etc/lsb-release)
@@ -66,6 +70,10 @@ fi
 if [[ x"${release}" == x"centos" ]]; then
     if [[ ${os_version} -le 6 ]]; then
         echo -e "${red}请使用 CentOS 7 或更高版本的系统！${plain}\n" && exit 1
+    fi
+elif [[ x"${release}" == x"alpine" ]]; then
+    if [[ ${os_version} < "3.11" ]]; then
+        echo -e "${red}请使用 Alpine 3.11 或更高版本的系统！${plain}\n" && exit 1
     fi
 elif [[ x"${release}" == x"ubuntu" ]]; then
     if [[ ${os_version} -lt 16 ]]; then

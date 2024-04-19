@@ -55,7 +55,11 @@ os_version=""
 
 # os version
 if [[ -f /etc/os-release ]]; then
-    os_version=$(awk -F'[= ."]' '/VERSION_ID/{print $3}' /etc/os-release)
+    if [[ x"${release}" == x"alpine" ]]; then
+        os_version=$(cat /etc/os-release | awk -F= '/VERSION_ID/{print $2}' | awk -F. '{print $1"."$2}')
+    else
+        os_version=$(awk -F'[= ."]' '/VERSION_ID/{print $3}' /etc/os-release)
+    fi
 fi
 if [[ -z "$os_version" && -f /etc/lsb-release ]]; then
     os_version=$(awk -F'[= ."]+' '/DISTRIB_RELEASE/{print $2}' /etc/lsb-release)
@@ -64,6 +68,10 @@ fi
 if [[ x"${release}" == x"centos" ]]; then
     if [[ ${os_version} -le 6 ]]; then
         LOGE "请使用 CentOS 7 或更高版本的系统！\n" && exit 1
+    fi
+elif [[ x"${release}" == x"alpine" ]]; then
+    if [[ ${os_version} < "3.11" ]]; then
+        LOGE "请使用 Alpine 3.11 或更高版本的系统！\n" && exit 1
     fi
 elif [[ x"${release}" == x"ubuntu" ]]; then
     if [[ ${os_version} -lt 16 ]]; then
@@ -469,8 +477,8 @@ ssl_cert_issue_standalone() {
     #install socat second
     if [[ x"${release}" == x"centos" ]]; then
         yum install socat -y
-	elif [[ x"${release}" == x"alpine" ]]; then
-		apk add socat
+    elif [[ x"${release}" == x"alpine" ]]; then
+        apk add socat openssl
     else
         apt install socat -y
     fi
