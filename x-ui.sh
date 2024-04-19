@@ -33,6 +33,8 @@ function LOGI() {
 # check os
 if [[ -f /etc/redhat-release ]]; then
     release="centos"
+elif cat /etc/issue | grep -Eqi "alpine"; then
+    release="alpine"
 elif cat /etc/issue | grep -Eqi "debian"; then
     release="debian"
 elif cat /etc/issue | grep -Eqi "ubuntu"; then
@@ -467,6 +469,8 @@ ssl_cert_issue_standalone() {
     #install socat second
     if [[ x"${release}" == x"centos" ]]; then
         yum install socat -y
+	elif [[ x"${release}" == x"alpine" ]]; then
+		apk add socat
     else
         apt install socat -y
     fi

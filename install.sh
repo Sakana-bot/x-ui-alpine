@@ -31,7 +31,11 @@ else
     echo -e "${red}未检测到系统版本，请联系脚本作者！${plain}\n" && exit 1
 fi
 
-arch=$(arch)
+if [[ x"${release}" == x"alpine" ]]; then
+	arch=$(uname -m)
+else
+	arch=$(arch)
+fi
 
 if [[ $arch == "x86_64" || $arch == "x64" || $arch == "s390x" || $arch == "amd64" ]]; then
     arch="amd64"
